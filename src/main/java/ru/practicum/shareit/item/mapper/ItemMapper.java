@@ -26,4 +26,16 @@ public class ItemMapper {
                 ownerId
         );
     }
+
+    public void updateEntity(Item existing, ItemDto source) {
+        if (source.getName() != null) {
+            existing.setName(source.getName());
+        }
+        if (source.getDescription() != null) {
+            existing.setDescription(source.getDescription());
+        }
+        if (source.getAvailable() != null) {
+            existing.setAvailable(source.getAvailable());
+        }
+    }
 }

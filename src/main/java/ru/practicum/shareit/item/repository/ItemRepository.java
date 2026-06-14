@@ -4,12 +4,14 @@ import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 @Repository
 public class ItemRepository {
-    private final Map<Long, Item> items = new HashMap<>();
-    private Long idCounter = 1L;
+    private final Map<Long, Item> items = new ConcurrentHashMap<>();
+    private final AtomicLong idCounter = new AtomicLong(1);
 
     public List<Item> findAll() {
         return new ArrayList<>(items.values());
@@ -27,7 +29,7 @@ public class ItemRepository {
 
     public Item save(Item item) {
         if (item.getId() == null) {
-            item.setId(idCounter++);
+            item.setId(idCounter.getAndIncrement());
         }
         items.put(item.getId(), item);
         return item;

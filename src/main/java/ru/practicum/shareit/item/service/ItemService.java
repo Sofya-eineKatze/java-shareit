@@ -5,9 +5,10 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import java.util.List;
 
 public interface ItemService {
+
     List<ItemDto> getItemsByOwner(Long ownerId);
 
-    ItemDto getItemById(Long id, Long userId);
+    ItemDto getItemById(Long itemId, Long userId);
 
     ItemDto createItem(Long ownerId, ItemDto itemDto);
 

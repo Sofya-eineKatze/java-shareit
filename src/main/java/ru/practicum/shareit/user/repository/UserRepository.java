@@ -4,11 +4,14 @@ import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Repository
 public class UserRepository {
-    private final Map<Long, User> users = new HashMap<>();
-    private Long idCounter = 1L;
+    private final Map<Long, User> users = new ConcurrentHashMap<>();
+    private final Map<String, Long> emailToId = new ConcurrentHashMap<>();
+    private final AtomicLong idCounter = new AtomicLong(1);
 
     public List<User> findAll() {
         return new ArrayList<>(users.values());
@@ -20,22 +23,26 @@ public class UserRepository {
 
     public User save(User user) {
         if (user.getId() == null) {
-            user.setId(idCounter++);
+            user.setId(idCounter.getAndIncrement());
         }
         users.put(user.getId(), user);
+        emailToId.put(user.getEmail(), user.getId());
         return user;
     }
 
     public void deleteById(Long id) {
-        users.remove(id);
+        User user = users.remove(id);
+        if (user != null) {
+            emailToId.remove(user.getEmail());
+        }
     }
 
     public boolean existsByEmail(String email) {
-        return users.values().stream().anyMatch(u -> u.getEmail().equals(email));
+        return emailToId.containsKey(email);
     }
 
     public boolean existsByEmailAndIdNot(String email, Long id) {
-        return users.values().stream()
-                .anyMatch(u -> u.getEmail().equals(email) && !u.getId().equals(id));
+        Long existingId = emailToId.get(email);
+        return existingId != null && !existingId.equals(id);
     }
 }

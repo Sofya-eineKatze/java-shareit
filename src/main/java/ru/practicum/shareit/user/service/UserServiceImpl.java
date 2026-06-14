@@ -36,7 +36,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto createUser(UserDto userDto) {
-        validateUserDto(userDto);
+        if (userDto.getName() == null || userDto.getName().isBlank()) {
+            throw new ValidationException("Имя не может быть пустым");
+        }
+        if (userDto.getEmail() == null || userDto.getEmail().isBlank()) {
+            throw new ValidationException("Email не может быть пустым");
+        }
+        if (!userDto.getEmail().matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
+            throw new ValidationException("Неверный формат email: " + userDto.getEmail());
+        }
         if (userRepository.existsByEmail(userDto.getEmail())) {
             throw new ConflictException("Email уже существует: " + userDto.getEmail());
         }
@@ -51,17 +59,11 @@ public class UserServiceImpl implements UserService {
         User existing = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Пользователь с id " + id + " не найден"));
 
-        if (userDto.getName() != null) {
-            existing.setName(userDto.getName());
-        }
-        if (userDto.getEmail() != null) {
-            if (userRepository.existsByEmailAndIdNot(userDto.getEmail(), id)) {
-                throw new ConflictException("Email уже существует: " + userDto.getEmail());
-            }
-            existing.setEmail(userDto.getEmail());
+        if (userDto.getEmail() != null && userRepository.existsByEmailAndIdNot(userDto.getEmail(), id)) {
+            throw new ConflictException("Email уже существует: " + userDto.getEmail());
         }
 
-        validateUser(existing);
+        userMapper.updateEntity(existing, userDto);
         User updated = userRepository.save(existing);
         log.info("Обновлён пользователь с id {}", updated.getId());
         return userMapper.toDto(updated);
@@ -74,29 +76,5 @@ public class UserServiceImpl implements UserService {
         }
         userRepository.deleteById(id);
         log.info("Удалён пользователь с id {}", id);
-    }
-
-    private void validateUserDto(UserDto userDto) {
-        if (userDto.getName() == null || userDto.getName().isBlank()) {
-            throw new ValidationException("Имя не может быть пустым");
-        }
-        if (userDto.getEmail() == null || userDto.getEmail().isBlank()) {
-            throw new ValidationException("Email не может быть пустым");
-        }
-        if (!userDto.getEmail().matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
-            throw new ValidationException("Неверный формат email: " + userDto.getEmail());
-        }
-    }
-
-    private void validateUser(User user) {
-        if (user.getName() == null || user.getName().isBlank()) {
-            throw new ValidationException("Имя не может быть пустым");
-        }
-        if (user.getEmail() == null || user.getEmail().isBlank()) {
-            throw new ValidationException("Email не может быть пустым");
-        }
-        if (!user.getEmail().matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
-            throw new ValidationException("Неверный формат email: " + user.getEmail());
-        }
     }
 }

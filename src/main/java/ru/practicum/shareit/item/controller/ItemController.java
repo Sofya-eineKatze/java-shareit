@@ -1,8 +1,10 @@
 package ru.practicum.shareit.item.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.constants.HeadersConstants;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.service.ItemService;
 
@@ -16,7 +18,7 @@ public class ItemController {
     private final ItemService itemService;
 
     @GetMapping
-    public List<ItemDto> getItemsByOwner(@RequestHeader("X-Sharer-User-Id") Long ownerId) {
+    public List<ItemDto> getItemsByOwner(@RequestHeader(HeadersConstants.USER_ID_HEADER) Long ownerId) {
         log.info("GET /items - получение всех вещей пользователя {}", ownerId);
         return itemService.getItemsByOwner(ownerId);
     }
@@ -24,7 +26,7 @@ public class ItemController {
     @GetMapping("/{itemId}")
     public ItemDto getItemById(
             @PathVariable Long itemId,
-            @RequestHeader("X-Sharer-User-Id") Long userId
+            @RequestHeader(HeadersConstants.USER_ID_HEADER) Long userId
     ) {
         log.info("GET /items/{} - получение вещи пользователем {}", itemId, userId);
         return itemService.getItemById(itemId, userId);
@@ -32,8 +34,8 @@ public class ItemController {
 
     @PostMapping
     public ItemDto createItem(
-            @RequestHeader("X-Sharer-User-Id") Long ownerId,
-            @RequestBody ItemDto itemDto
+            @RequestHeader(HeadersConstants.USER_ID_HEADER) Long ownerId,
+            @Valid @RequestBody ItemDto itemDto
     ) {
         log.info("POST /items - создание вещи для пользователя {}", ownerId);
         return itemService.createItem(ownerId, itemDto);
@@ -42,7 +44,7 @@ public class ItemController {
     @PatchMapping("/{itemId}")
     public ItemDto updateItem(
             @PathVariable Long itemId,
-            @RequestHeader("X-Sharer-User-Id") Long ownerId,
+            @RequestHeader(HeadersConstants.USER_ID_HEADER) Long ownerId,
             @RequestBody ItemDto itemDto
     ) {
         log.info("PATCH /items/{} - обновление вещи пользователем {}", itemId, ownerId);

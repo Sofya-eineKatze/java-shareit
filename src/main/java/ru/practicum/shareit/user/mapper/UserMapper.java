@@ -23,4 +23,13 @@ public class UserMapper {
                 userDto.getEmail()
         );
     }
+
+    public void updateEntity(User existing, UserDto source) {
+        if (source.getName() != null) {
+            existing.setName(source.getName());
+        }
+        if (source.getEmail() != null) {
+            existing.setEmail(source.getEmail());
+        }
+    }
 }
