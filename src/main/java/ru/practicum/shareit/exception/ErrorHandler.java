@@ -37,4 +37,11 @@ public class ErrorHandler {
         log.error("500: {}", e.getMessage(), e);
         return new ErrorResponse("Внутренняя ошибка сервера");
     }
+
+    @ExceptionHandler(ForbiddenException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse handleForbidden(ForbiddenException e) {
+        log.error("403: {}", e.getMessage());
+        return new ErrorResponse(e.getMessage());
+    }
 }

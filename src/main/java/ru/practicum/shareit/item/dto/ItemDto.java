@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,4 +22,26 @@ public class ItemDto {
 
     @NotNull(message = "Статус доступности должен быть указан")
     private Boolean available;
+
+    private List<CommentDto> comments;
+    private BookingInfo lastBooking;
+    private BookingInfo nextBooking;
+
+    public ItemDto(Long id, String name, String description, Boolean available) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.available = available;
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class BookingInfo {
+        private Long id;
+        private Long bookerId;
+        private String start;
+        private String end;
+        private String status;
+    }
 }

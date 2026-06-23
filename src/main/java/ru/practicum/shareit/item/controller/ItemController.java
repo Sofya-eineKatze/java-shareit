@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.constants.HeadersConstants;
+import ru.practicum.shareit.item.dto.CommentDto;
+import ru.practicum.shareit.item.dto.CommentRequestDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.service.ItemService;
 
@@ -55,5 +57,16 @@ public class ItemController {
     public List<ItemDto> searchItems(@RequestParam String text) {
         log.info("GET /items/search - поиск вещей по тексту '{}'", text);
         return itemService.searchItems(text);
+    }
+
+    @PostMapping("/{itemId}/comment")
+    public CommentDto addComment(
+            @PathVariable Long itemId,
+            @RequestHeader(HeadersConstants.USER_ID_HEADER) Long userId,
+            @RequestBody CommentRequestDto request
+    ) {
+        log.info("POST /items/{}/comment - пользователь {} оставляет комментарий: {}",
+                itemId, userId, request.getText());  // ← добавьте лог
+        return itemService.addComment(itemId, userId, request.getText());
     }
 }
