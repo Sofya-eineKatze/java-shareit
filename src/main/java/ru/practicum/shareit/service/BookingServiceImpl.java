@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.dto.BookingRequestDto;
 import ru.practicum.shareit.dto.BookingResponseDto;
+import ru.practicum.shareit.exception.ForbiddenException;
 import ru.practicum.shareit.mapper.BookingMapper;
 import ru.practicum.shareit.model.Booking;
 import ru.practicum.shareit.repository.BookingRepository;
@@ -63,7 +64,7 @@ public class BookingServiceImpl implements BookingService {
                 .orElseThrow(() -> new NotFoundException("Бронирование не найдено"));
 
         if (!booking.getItem().getOwner().equals(ownerId)) {
-            throw new NotFoundException("Только владелец может подтверждать бронирование");
+            throw new ForbiddenException("Только владелец может подтверждать бронирование");
         }
 
         if (booking.getStatus() != BookingStatus.WAITING) {
