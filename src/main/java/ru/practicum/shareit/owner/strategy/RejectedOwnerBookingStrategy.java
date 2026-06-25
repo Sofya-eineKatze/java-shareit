@@ -1,4 +1,4 @@
-package ru.practicum.shareit.booking.strategy;
+package ru.practicum.shareit.owner.strategy;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -8,13 +8,13 @@ import ru.practicum.shareit.status.BookingStatus;
 
 import java.util.List;
 
-@Component("waitingBookingStrategy")
+@Component
 @RequiredArgsConstructor
-public class WaitingBookingStrategy implements BookingStateStrategy {
+public class RejectedOwnerBookingStrategy implements OwnerBookingStateStrategy {
     private final BookingRepository bookingRepository;
 
     @Override
-    public List<Booking> getBookings(Long userId) {
-        return bookingRepository.findByBookerIdAndStatusOrderByStartDesc(userId, BookingStatus.WAITING);
+    public List<Booking> getBookings(Long ownerId) {
+        return bookingRepository.findAllByOwnerIdAndStatus(ownerId, BookingStatus.REJECTED);
     }
 }

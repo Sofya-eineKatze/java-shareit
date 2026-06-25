@@ -8,7 +8,7 @@ import ru.practicum.shareit.status.BookingStatus;
 
 import java.util.List;
 
-@Component
+@Component("rejectedBookingStrategy")
 @RequiredArgsConstructor
 public class RejectedBookingStrategy implements BookingStateStrategy {
     private final BookingRepository bookingRepository;

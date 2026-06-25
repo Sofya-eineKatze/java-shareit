@@ -8,7 +8,7 @@ import ru.practicum.shareit.repository.BookingRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Component
+@Component("futureBookingStrategy")
 @RequiredArgsConstructor
 public class FutureBookingStrategy implements BookingStateStrategy {
     private final BookingRepository bookingRepository;

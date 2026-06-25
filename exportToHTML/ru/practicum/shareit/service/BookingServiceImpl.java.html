@@ -1,0 +1,136 @@
+<html>
+<head>
+<title>BookingServiceImpl.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #6aab73;}
+.s4 { color: #7a7e85;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+BookingServiceImpl.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">ru</span><span class="s2">.</span><span class="s1">practicum</span><span class="s2">.</span><span class="s1">shareit</span><span class="s2">.</span><span class="s1">service</span><span class="s2">;</span>
+
+<span class="s0">import </span><span class="s1">lombok</span><span class="s2">.</span><span class="s1">RequiredArgsConstructor</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">lombok</span><span class="s2">.</span><span class="s1">extern</span><span class="s2">.</span><span class="s1">slf4j</span><span class="s2">.</span><span class="s1">Slf4j</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">org</span><span class="s2">.</span><span class="s1">springframework</span><span class="s2">.</span><span class="s1">stereotype</span><span class="s2">.</span><span class="s1">Service</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">ru</span><span class="s2">.</span><span class="s1">practicum</span><span class="s2">.</span><span class="s1">shareit</span><span class="s2">.</span><span class="s1">dto</span><span class="s2">.</span><span class="s1">BookingRequestDto</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">ru</span><span class="s2">.</span><span class="s1">practicum</span><span class="s2">.</span><span class="s1">shareit</span><span class="s2">.</span><span class="s1">dto</span><span class="s2">.</span><span class="s1">BookingResponseDto</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">ru</span><span class="s2">.</span><span class="s1">practicum</span><span class="s2">.</span><span class="s1">shareit</span><span class="s2">.</span><span class="s1">mapper</span><span class="s2">.</span><span class="s1">BookingMapper</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">ru</span><span class="s2">.</span><span class="s1">practicum</span><span class="s2">.</span><span class="s1">shareit</span><span class="s2">.</span><span class="s1">model</span><span class="s2">.</span><span class="s1">Booking</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">ru</span><span class="s2">.</span><span class="s1">practicum</span><span class="s2">.</span><span class="s1">shareit</span><span class="s2">.</span><span class="s1">repository</span><span class="s2">.</span><span class="s1">BookingRepository</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">ru</span><span class="s2">.</span><span class="s1">practicum</span><span class="s2">.</span><span class="s1">shareit</span><span class="s2">.</span><span class="s1">status</span><span class="s2">.</span><span class="s1">BookingStatus</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">ru</span><span class="s2">.</span><span class="s1">practicum</span><span class="s2">.</span><span class="s1">shareit</span><span class="s2">.</span><span class="s1">booking</span><span class="s2">.</span><span class="s1">strategy</span><span class="s2">.</span><span class="s1">BookingStateContext</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">ru</span><span class="s2">.</span><span class="s1">practicum</span><span class="s2">.</span><span class="s1">shareit</span><span class="s2">.</span><span class="s1">exception</span><span class="s2">.</span><span class="s1">NotFoundException</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">ru</span><span class="s2">.</span><span class="s1">practicum</span><span class="s2">.</span><span class="s1">shareit</span><span class="s2">.</span><span class="s1">exception</span><span class="s2">.</span><span class="s1">ValidationException</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">ru</span><span class="s2">.</span><span class="s1">practicum</span><span class="s2">.</span><span class="s1">shareit</span><span class="s2">.</span><span class="s1">model</span><span class="s2">.</span><span class="s1">Item</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">ru</span><span class="s2">.</span><span class="s1">practicum</span><span class="s2">.</span><span class="s1">shareit</span><span class="s2">.</span><span class="s1">repository</span><span class="s2">.</span><span class="s1">ItemRepository</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">ru</span><span class="s2">.</span><span class="s1">practicum</span><span class="s2">.</span><span class="s1">shareit</span><span class="s2">.</span><span class="s1">model</span><span class="s2">.</span><span class="s1">User</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">ru</span><span class="s2">.</span><span class="s1">practicum</span><span class="s2">.</span><span class="s1">shareit</span><span class="s2">.</span><span class="s1">repository</span><span class="s2">.</span><span class="s1">UserRepository</span><span class="s2">;</span>
+
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">time</span><span class="s2">.</span><span class="s1">LocalDateTime</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">util</span><span class="s2">.</span><span class="s1">List</span><span class="s2">;</span>
+
+<span class="s1">@Service</span>
+<span class="s1">@RequiredArgsConstructor</span>
+<span class="s1">@Slf4j</span>
+<span class="s0">public class </span><span class="s1">BookingServiceImpl </span><span class="s0">implements </span><span class="s1">BookingService </span><span class="s2">{</span>
+    <span class="s0">private final </span><span class="s1">BookingRepository bookingRepository</span><span class="s2">;</span>
+    <span class="s0">private final </span><span class="s1">UserRepository userRepository</span><span class="s2">;</span>
+    <span class="s0">private final </span><span class="s1">ItemRepository itemRepository</span><span class="s2">;</span>
+    <span class="s0">private final </span><span class="s1">BookingMapper bookingMapper</span><span class="s2">;</span>
+    <span class="s0">private final </span><span class="s1">BookingStateContext stateContext</span><span class="s2">;</span>
+
+    <span class="s1">@Override</span>
+    <span class="s0">public </span><span class="s1">BookingResponseDto createBooking</span><span class="s2">(</span><span class="s1">Long bookerId</span><span class="s2">, </span><span class="s1">BookingRequestDto requestDto</span><span class="s2">) {</span>
+        <span class="s1">User booker </span><span class="s2">= </span><span class="s1">userRepository</span><span class="s2">.</span><span class="s1">findById</span><span class="s2">(</span><span class="s1">bookerId</span><span class="s2">)</span>
+                <span class="s2">.</span><span class="s1">orElseThrow</span><span class="s2">(() </span><span class="s1">-&gt; </span><span class="s0">new </span><span class="s1">NotFoundException</span><span class="s2">(</span><span class="s3">&quot;Пользователь не найден&quot;</span><span class="s2">));</span>
+
+        <span class="s1">Item item </span><span class="s2">= </span><span class="s1">itemRepository</span><span class="s2">.</span><span class="s1">findById</span><span class="s2">(</span><span class="s1">requestDto</span><span class="s2">.</span><span class="s1">getItemId</span><span class="s2">())</span>
+                <span class="s2">.</span><span class="s1">orElseThrow</span><span class="s2">(() </span><span class="s1">-&gt; </span><span class="s0">new </span><span class="s1">NotFoundException</span><span class="s2">(</span><span class="s3">&quot;Вещь не найдена&quot;</span><span class="s2">));</span>
+
+        <span class="s0">if </span><span class="s2">(!</span><span class="s1">item</span><span class="s2">.</span><span class="s1">getAvailable</span><span class="s2">()) {</span>
+            <span class="s0">throw new </span><span class="s1">ValidationException</span><span class="s2">(</span><span class="s3">&quot;Вещь недоступна для бронирования&quot;</span><span class="s2">);</span>
+        <span class="s2">}</span>
+
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">item</span><span class="s2">.</span><span class="s1">getOwner</span><span class="s2">().</span><span class="s1">equals</span><span class="s2">(</span><span class="s1">bookerId</span><span class="s2">)) {</span>
+            <span class="s0">throw new </span><span class="s1">NotFoundException</span><span class="s2">(</span><span class="s3">&quot;Владелец не может бронировать свою вещь&quot;</span><span class="s2">);</span>
+        <span class="s2">}</span>
+
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">requestDto</span><span class="s2">.</span><span class="s1">getStart</span><span class="s2">().</span><span class="s1">isAfter</span><span class="s2">(</span><span class="s1">requestDto</span><span class="s2">.</span><span class="s1">getEnd</span><span class="s2">()) || </span><span class="s1">requestDto</span><span class="s2">.</span><span class="s1">getStart</span><span class="s2">().</span><span class="s1">equals</span><span class="s2">(</span><span class="s1">requestDto</span><span class="s2">.</span><span class="s1">getEnd</span><span class="s2">())) {</span>
+            <span class="s0">throw new </span><span class="s1">ValidationException</span><span class="s2">(</span><span class="s3">&quot;Дата начала должна быть раньше даты окончания&quot;</span><span class="s2">);</span>
+        <span class="s2">}</span>
+
+        <span class="s1">Booking booking </span><span class="s2">= </span><span class="s1">bookingMapper</span><span class="s2">.</span><span class="s1">toEntity</span><span class="s2">(</span><span class="s1">requestDto</span><span class="s2">, </span><span class="s1">BookingStatus</span><span class="s2">.</span><span class="s1">WAITING</span><span class="s2">);</span>
+        <span class="s1">booking</span><span class="s2">.</span><span class="s1">setItem</span><span class="s2">(</span><span class="s1">item</span><span class="s2">);</span>
+        <span class="s1">booking</span><span class="s2">.</span><span class="s1">setBooker</span><span class="s2">(</span><span class="s1">booker</span><span class="s2">);</span>
+
+        <span class="s1">Booking saved </span><span class="s2">= </span><span class="s1">bookingRepository</span><span class="s2">.</span><span class="s1">save</span><span class="s2">(</span><span class="s1">booking</span><span class="s2">);</span>
+        <span class="s1">log</span><span class="s2">.</span><span class="s1">info</span><span class="s2">(</span><span class="s3">&quot;Создано бронирование с id {} для вещи {}&quot;</span><span class="s2">, </span><span class="s1">saved</span><span class="s2">.</span><span class="s1">getId</span><span class="s2">(), </span><span class="s1">item</span><span class="s2">.</span><span class="s1">getId</span><span class="s2">());</span>
+        <span class="s0">return </span><span class="s1">bookingMapper</span><span class="s2">.</span><span class="s1">toResponseDto</span><span class="s2">(</span><span class="s1">saved</span><span class="s2">);</span>
+    <span class="s2">}</span>
+
+    <span class="s1">@Override</span>
+    <span class="s0">public </span><span class="s1">BookingResponseDto approveBooking</span><span class="s2">(</span><span class="s1">Long bookingId</span><span class="s2">, </span><span class="s1">Long ownerId</span><span class="s2">, </span><span class="s1">Boolean approved</span><span class="s2">) {</span>
+        <span class="s1">Booking booking </span><span class="s2">= </span><span class="s1">bookingRepository</span><span class="s2">.</span><span class="s1">findById</span><span class="s2">(</span><span class="s1">bookingId</span><span class="s2">)</span>
+                <span class="s2">.</span><span class="s1">orElseThrow</span><span class="s2">(() </span><span class="s1">-&gt; </span><span class="s0">new </span><span class="s1">NotFoundException</span><span class="s2">(</span><span class="s3">&quot;Бронирование не найдено&quot;</span><span class="s2">));</span>
+
+        <span class="s0">if </span><span class="s2">(!</span><span class="s1">booking</span><span class="s2">.</span><span class="s1">getItem</span><span class="s2">().</span><span class="s1">getOwner</span><span class="s2">().</span><span class="s1">equals</span><span class="s2">(</span><span class="s1">ownerId</span><span class="s2">)) {</span>
+            <span class="s0">throw new </span><span class="s1">NotFoundException</span><span class="s2">(</span><span class="s3">&quot;Только владелец может подтверждать бронирование&quot;</span><span class="s2">);</span>
+        <span class="s2">}</span>
+
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">booking</span><span class="s2">.</span><span class="s1">getStatus</span><span class="s2">() != </span><span class="s1">BookingStatus</span><span class="s2">.</span><span class="s1">WAITING</span><span class="s2">) {</span>
+            <span class="s0">throw new </span><span class="s1">ValidationException</span><span class="s2">(</span><span class="s3">&quot;Бронирование уже обработано&quot;</span><span class="s2">);</span>
+        <span class="s2">}</span>
+
+        <span class="s1">booking</span><span class="s2">.</span><span class="s1">setStatus</span><span class="s2">(</span><span class="s1">approved </span><span class="s2">? </span><span class="s1">BookingStatus</span><span class="s2">.</span><span class="s1">APPROVED </span><span class="s2">: </span><span class="s1">BookingStatus</span><span class="s2">.</span><span class="s1">REJECTED</span><span class="s2">);</span>
+        <span class="s1">Booking updated </span><span class="s2">= </span><span class="s1">bookingRepository</span><span class="s2">.</span><span class="s1">save</span><span class="s2">(</span><span class="s1">booking</span><span class="s2">);</span>
+        <span class="s1">log</span><span class="s2">.</span><span class="s1">info</span><span class="s2">(</span><span class="s3">&quot;Бронирование {} статус изменён на {}&quot;</span><span class="s2">, </span><span class="s1">bookingId</span><span class="s2">, </span><span class="s1">updated</span><span class="s2">.</span><span class="s1">getStatus</span><span class="s2">());</span>
+        <span class="s0">return </span><span class="s1">bookingMapper</span><span class="s2">.</span><span class="s1">toResponseDto</span><span class="s2">(</span><span class="s1">updated</span><span class="s2">);</span>
+    <span class="s2">}</span>
+
+    <span class="s1">@Override</span>
+    <span class="s0">public </span><span class="s1">BookingResponseDto getBookingById</span><span class="s2">(</span><span class="s1">Long bookingId</span><span class="s2">, </span><span class="s1">Long userId</span><span class="s2">) {</span>
+        <span class="s1">Booking booking </span><span class="s2">= </span><span class="s1">bookingRepository</span><span class="s2">.</span><span class="s1">findById</span><span class="s2">(</span><span class="s1">bookingId</span><span class="s2">)</span>
+                <span class="s2">.</span><span class="s1">orElseThrow</span><span class="s2">(() </span><span class="s1">-&gt; </span><span class="s0">new </span><span class="s1">NotFoundException</span><span class="s2">(</span><span class="s3">&quot;Бронирование не найдено&quot;</span><span class="s2">));</span>
+
+        <span class="s0">if </span><span class="s2">(!</span><span class="s1">booking</span><span class="s2">.</span><span class="s1">getBooker</span><span class="s2">().</span><span class="s1">getId</span><span class="s2">().</span><span class="s1">equals</span><span class="s2">(</span><span class="s1">userId</span><span class="s2">) &amp;&amp; !</span><span class="s1">booking</span><span class="s2">.</span><span class="s1">getItem</span><span class="s2">().</span><span class="s1">getOwner</span><span class="s2">().</span><span class="s1">equals</span><span class="s2">(</span><span class="s1">userId</span><span class="s2">)) {</span>
+            <span class="s0">throw new </span><span class="s1">NotFoundException</span><span class="s2">(</span><span class="s3">&quot;Доступ запрещён&quot;</span><span class="s2">);</span>
+        <span class="s2">}</span>
+
+        <span class="s0">return </span><span class="s1">bookingMapper</span><span class="s2">.</span><span class="s1">toResponseDto</span><span class="s2">(</span><span class="s1">booking</span><span class="s2">);</span>
+    <span class="s2">}</span>
+
+    <span class="s1">@Override</span>
+    <span class="s0">public </span><span class="s1">List</span><span class="s2">&lt;</span><span class="s1">BookingResponseDto</span><span class="s2">&gt; </span><span class="s1">getBookingsByUser</span><span class="s2">(</span><span class="s1">Long userId</span><span class="s2">, </span><span class="s1">String state</span><span class="s2">) {</span>
+        <span class="s1">userRepository</span><span class="s2">.</span><span class="s1">findById</span><span class="s2">(</span><span class="s1">userId</span><span class="s2">)</span>
+                <span class="s2">.</span><span class="s1">orElseThrow</span><span class="s2">(() </span><span class="s1">-&gt; </span><span class="s0">new </span><span class="s1">NotFoundException</span><span class="s2">(</span><span class="s3">&quot;Пользователь не найден&quot;</span><span class="s2">));</span>
+
+        <span class="s4">// Используем стратегию вместо switch-case</span>
+        <span class="s1">List</span><span class="s2">&lt;</span><span class="s1">Booking</span><span class="s2">&gt; </span><span class="s1">bookings </span><span class="s2">= </span><span class="s1">stateContext</span><span class="s2">.</span><span class="s1">getBookingsByState</span><span class="s2">(</span><span class="s1">userId</span><span class="s2">, </span><span class="s1">state</span><span class="s2">);</span>
+        <span class="s0">return </span><span class="s1">bookings</span><span class="s2">.</span><span class="s1">stream</span><span class="s2">()</span>
+                <span class="s2">.</span><span class="s1">map</span><span class="s2">(</span><span class="s1">bookingMapper::toResponseDto</span><span class="s2">)</span>
+                <span class="s2">.</span><span class="s1">toList</span><span class="s2">();</span>
+    <span class="s2">}</span>
+
+    <span class="s1">@Override</span>
+    <span class="s0">public </span><span class="s1">List</span><span class="s2">&lt;</span><span class="s1">BookingResponseDto</span><span class="s2">&gt; </span><span class="s1">getBookingsByOwner</span><span class="s2">(</span><span class="s1">Long ownerId</span><span class="s2">, </span><span class="s1">String state</span><span class="s2">) {</span>
+        <span class="s1">userRepository</span><span class="s2">.</span><span class="s1">findById</span><span class="s2">(</span><span class="s1">ownerId</span><span class="s2">)</span>
+                <span class="s2">.</span><span class="s1">orElseThrow</span><span class="s2">(() </span><span class="s1">-&gt; </span><span class="s0">new </span><span class="s1">NotFoundException</span><span class="s2">(</span><span class="s3">&quot;Пользователь не найден&quot;</span><span class="s2">));</span>
+
+        <span class="s4">// Используем стратегию для владельца</span>
+        <span class="s1">List</span><span class="s2">&lt;</span><span class="s1">Booking</span><span class="s2">&gt; </span><span class="s1">bookings </span><span class="s2">= </span><span class="s1">stateContext</span><span class="s2">.</span><span class="s1">getBookingsByOwner</span><span class="s2">(</span><span class="s1">ownerId</span><span class="s2">, </span><span class="s1">state</span><span class="s2">);</span>
+        <span class="s0">return </span><span class="s1">bookings</span><span class="s2">.</span><span class="s1">stream</span><span class="s2">()</span>
+                <span class="s2">.</span><span class="s1">map</span><span class="s2">(</span><span class="s1">bookingMapper::toResponseDto</span><span class="s2">)</span>
+                <span class="s2">.</span><span class="s1">toList</span><span class="s2">();</span>
+    <span class="s2">}</span>
+<span class="s2">}</span></pre>
+</body>
+</html>

@@ -1,4 +1,4 @@
-package ru.practicum.shareit.booking.strategy;
+package ru.practicum.shareit.owner.strategy;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -7,13 +7,13 @@ import ru.practicum.shareit.repository.BookingRepository;
 
 import java.util.List;
 
-@Component("allBookingStrategy")
+@Component
 @RequiredArgsConstructor
-public class AllBookingStrategy implements BookingStateStrategy {
+public class AllOwnerBookingStrategy implements OwnerBookingStateStrategy {
     private final BookingRepository bookingRepository;
 
     @Override
-    public List<Booking> getBookings(Long userId) {
-        return bookingRepository.findByBookerIdOrderByStartDesc(userId);
+    public List<Booking> getBookings(Long ownerId) {
+        return bookingRepository.findAllByOwnerId(ownerId);
     }
 }
