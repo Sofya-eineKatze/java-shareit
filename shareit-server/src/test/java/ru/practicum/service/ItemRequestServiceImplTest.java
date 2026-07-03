@@ -105,7 +105,8 @@ class ItemRequestServiceImplTest {
     void getRequestById_ShouldReturnRequest() {
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(requestRepository.findById(1L)).thenReturn(Optional.of(request));
-        when(mapper.toDto(any(ItemRequest.class))).thenReturn(new ItemRequestDto());
+        when(itemRepository.findByRequestId(1L)).thenReturn(List.of());
+        when(mapper.toDto(eq(request), any(Map.class))).thenReturn(new ItemRequestDto());
 
         ItemRequestDto result = requestService.getRequestById(1L, 1L);
 

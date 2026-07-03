@@ -78,7 +78,14 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         ItemRequest request = requestRepository.findById(requestId)
                 .orElseThrow(() -> new NotFoundException("Запрос с id " + requestId + " не найден"));
 
-        return mapper.toDto(request);
+        List<Item> items = itemRepository.findByRequestId(requestId);
+        Map<Long, List<ItemDto>> itemsByRequestId = items.stream()
+                .collect(Collectors.groupingBy(
+                        item -> item.getRequest().getId(),
+                        Collectors.mapping(itemMapper::toDto, Collectors.toList())
+                ));
+
+        return mapper.toDto(request, itemsByRequestId);
     }
 
     private List<ItemRequestDto> mapRequestsWithItems(List<ItemRequest> requests) {
